@@ -1,0 +1,19 @@
+{
+  "name": "export-etoro-import-sa",
+  "version": "1.0.0",
+  "description": "",
+  "main": "autosync.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "grunt": "^1.6.1",
+    "grunt-contrib-uglify": "^5.2.2",
+    "grunt-contrib-watch": "^1.1.0",
+    "terser": "^5.31.0"
+  }
+}
