@@ -7,10 +7,31 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+const IGNORE = ["NVTKL.L"];
 const ETORO_TO_SA_MAPPING = {
     "BA.L": {
         sa_name: "BAESY",
         conversion_rate: 71.24 / 1384,
+    },
+    "JD.US": {
+        sa_name: "JD",
+        conversion_rate: 1,
+    },
+    "RR.L": {
+        sa_name: "RYCEY",
+        conversion_rate: 5.63 / 442.1358,
+    },
+    "STLA.US": {
+        sa_name: "STLA",
+        conversion_rate: 1,
+    },
+    "VOW3.DE": {
+        sa_name: "VWAGY",
+        conversion_rate: 15.08 / 120.72,
+    },
+    "JASMY": {
+        sa_name: "JASMY-USD",
+        conversion_rate: 1,
     },
 };
 function mapEtoroToSASymbol(sa_symbol) {
@@ -50,6 +71,9 @@ function getEtoroPortfolio() {
             }
             let avg_open = parseFloat(avg_open_str);
             let units = parseFloat(units_str);
+            if (IGNORE.includes(symbol)) {
+                return;
+            }
             const mapped = mapEtoroToSASymbol(symbol);
             if (mapped) {
                 symbol = mapped.sa_name;

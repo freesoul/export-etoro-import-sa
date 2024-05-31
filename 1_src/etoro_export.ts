@@ -9,11 +9,35 @@ interface EtoroToSASymbolMapping {
   [key: string]: MappingEntry;
 }
 
+const IGNORE = ["NVTKL.L"]
+
 const ETORO_TO_SA_MAPPING: EtoroToSASymbolMapping = {
   "BA.L": {
     sa_name: "BAESY",
     conversion_rate: 71.24 / 1384,
   },
+  "JD.US": {
+    sa_name: "JD",
+    conversion_rate: 1,
+  },
+  "RR.L": {
+    sa_name: "RYCEY",
+    conversion_rate: 5.63 / 442.1358,
+  },
+  "STLA.US": {
+    sa_name: "STLA",
+    conversion_rate: 1,
+  },
+  "VOW3.DE": {
+    sa_name: "VWAGY",
+    conversion_rate: 15.08 / 120.72,
+  },
+  "JASMY": {
+    sa_name: "JASMY-USD",
+    conversion_rate: 1,
+  },
+
+
 };
 function mapEtoroToSASymbol(sa_symbol: string): MappingEntry | undefined {
   return ETORO_TO_SA_MAPPING[sa_symbol];
@@ -60,6 +84,9 @@ async function getEtoroPortfolio() {
     }
     let avg_open = parseFloat(avg_open_str);
     let units = parseFloat(units_str);
+    if (IGNORE.includes(symbol)) {
+      return;
+    }
     const mapped: MappingEntry | undefined = mapEtoroToSASymbol(symbol);
     if (mapped) {
       symbol = mapped.sa_name;

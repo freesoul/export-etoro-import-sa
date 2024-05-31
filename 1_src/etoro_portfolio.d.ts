@@ -8,3 +8,11 @@ interface EtoroPortfolio {
 
 export { EtoroPortfolio }
 
+
+
+interface Window {
+  getEtoroPortfolio: () => Promise<EtoroPortfolio[]>;
+}
+declare const window: Window;
+
+window.getEtoroPortfolio = getEtoroPortfolio;
