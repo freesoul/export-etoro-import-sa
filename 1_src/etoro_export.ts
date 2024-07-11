@@ -1,4 +1,8 @@
-import { EtoroPortfolio } from "./etoro_portfolio";
+
+import {
+  SharedPortfolio
+} from "./shared";
+
 
 interface MappingEntry {
   sa_name: string;
@@ -36,9 +40,8 @@ const ETORO_TO_SA_MAPPING: EtoroToSASymbolMapping = {
     sa_name: "JASMY-USD",
     conversion_rate: 1,
   },
-
-
 };
+
 function mapEtoroToSASymbol(sa_symbol: string): MappingEntry | undefined {
   return ETORO_TO_SA_MAPPING[sa_symbol];
 }
@@ -51,9 +54,8 @@ async function getEtoroContainer() {
     await new Promise((r) => setTimeout(r, 1000));
   }
   console.log(
-    "Found etoro portoflio container with tag " + ETORO_CONTAINER_TAG
+    "Found etoro portoflio container with tag " + ETORO_CONTAINER_TAG + "..."
   );
-  console.log(etoro_container[0]);
   return etoro_container[0];
 }
 
@@ -64,7 +66,7 @@ async function getEtoroPortfolio() {
   const dom_rows = dom_container.querySelectorAll(
     `[automation-id="${ETORO_ROW_CLASS}"]`
   );
-  const result: EtoroPortfolio[] = [];
+  const result: SharedPortfolio[] = [];
   const avg_open_automation_id =
     "portfolio-overview-table-body-cell-avg-open-rate";
   const symbol_id = "portfolio-overview-table-body-cell-market-name";
@@ -97,16 +99,31 @@ async function getEtoroPortfolio() {
       symbol,
       units,
     });
+    return result;
   });
 
   return result.filter((it) => !!it.units);
 }
 
 
-interface Window {
-  getEtoroPortfolio: () => Promise<EtoroPortfolio[]>;
+async function getEtoroPortfolioWithInstructions() {
+  const portfolio = await getEtoroPortfolio();
+  console.log("JSON portfolio : ")
+  console.log(portfolio)
+  console.log("Good, now copy the following variable, focus the tab where to import it, and paste it in the console:")
+  console.log("const exported_portfolio = " + JSON.stringify(portfolio) + ";");
 }
-declare const window: Window;
+
+
+declare global {
+  interface Window {
+    getEtoroPortfolio: () => Promise<SharedPortfolio[]>;
+    getEtoroPortfolioWithInstructions: () => Promise<void>;
+  }
+}
 
 window.getEtoroPortfolio = getEtoroPortfolio;
+window.getEtoroPortfolioWithInstructions = getEtoroPortfolioWithInstructions;
 
+
+window.getEtoroPortfolioWithInstructions()

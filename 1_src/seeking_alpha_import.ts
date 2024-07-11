@@ -1,13 +1,12 @@
 import {
-    EtoroPortfolio,
-} from "./etoro_portfolio";
-interface SeekingAlphaPortfolio {
-    symbol: string;
-    avg_open: number;
-    units: number;
-}
+    wait_for_selector_exists,
+    wait_for_first_selector_that_exists,
+} from "./helpers";
+import {
+    SharedPortfolio
+} from "./shared";
 
-async function getSeekingAlphaPortfolio() {
+async function getSeekingAlphaPortfolio(): Promise<SharedPortfolio[]> {
     const data_test_id = "default-portfolio-tickers";
     const dom_container: HTMLElement | null = document.querySelector(
         `[data-test-id="${data_test_id}"] table`
@@ -19,7 +18,7 @@ async function getSeekingAlphaPortfolio() {
     console.log("Container: ", dom_container);
     const rows = dom_container.querySelectorAll("tbody tr");
     const symbol_test_id = "portfolio-ticker-name";
-    const res: SeekingAlphaPortfolio[] = [];
+    const res: SharedPortfolio[] = [];
     rows.forEach((row) => {
         const symbol = (row.querySelector(
             `[data-test-id="${symbol_test_id}"]`
@@ -47,18 +46,18 @@ async function getSeekingAlphaPortfolio() {
 }
 
 interface AddUpdateRemove {
-    add: EtoroPortfolio[];
+    add: SharedPortfolio[];
     update: {
-        etoro: EtoroPortfolio;
-        seeking: SeekingAlphaPortfolio;
+        etoro: SharedPortfolio;
+        seeking: SharedPortfolio;
     }[];
-    remove: SeekingAlphaPortfolio[];
-    unchanged: SeekingAlphaPortfolio[];
+    remove: SharedPortfolio[];
+    unchanged: SharedPortfolio[];
 }
 
 async function getTickersAddUpdateRemove(
-    etoro_portfolio: EtoroPortfolio[],
-    seeking_alpha_portfolio: SeekingAlphaPortfolio[]
+    source_portfolio: SharedPortfolio[],
+    seeking_alpha_portfolio: SharedPortfolio[]
 ) {
     let res: AddUpdateRemove = {
         add: [],
@@ -68,7 +67,7 @@ async function getTickersAddUpdateRemove(
     };
 
     // Add
-    etoro_portfolio.forEach((etoro) => {
+    source_portfolio.forEach((etoro) => {
         let found = false;
         seeking_alpha_portfolio.forEach((seeking) => {
             if (etoro.symbol === seeking.symbol) {
@@ -85,7 +84,7 @@ async function getTickersAddUpdateRemove(
     }
 
     // Update
-    etoro_portfolio.forEach((etoro) => {
+    source_portfolio.forEach((etoro) => {
         seeking_alpha_portfolio.forEach((seeking) => {
             if (etoro.symbol === seeking.symbol) {
                 if (
@@ -104,7 +103,7 @@ async function getTickersAddUpdateRemove(
     // Remove
     seeking_alpha_portfolio.forEach((seeking) => {
         let found = false;
-        etoro_portfolio.forEach((etoro) => {
+        source_portfolio.forEach((etoro) => {
             if (etoro.symbol === seeking.symbol) {
                 found = true;
             }
@@ -115,7 +114,7 @@ async function getTickersAddUpdateRemove(
     });
 
     // Unchanged
-    etoro_portfolio.forEach((etoro) => {
+    source_portfolio.forEach((etoro) => {
         seeking_alpha_portfolio.forEach((seeking) => {
             if (etoro.symbol === seeking.symbol) {
                 if (
@@ -131,47 +130,6 @@ async function getTickersAddUpdateRemove(
     return res;
 }
 
-// const operations = await getTickersAddUpdateRemove(
-//     etoro_portfolio,
-//     seeking_alpha_portfolio
-// );
-
-
-async function wait_for_selector_exists(query: string): Promise<HTMLElement | null> {
-    let selector = null;
-    while (selector === null) {
-        selector = document.querySelector(query);
-        if (selector) {
-            return selector as HTMLElement | null;
-        }
-        await new Promise(r => setTimeout(r, 100));
-    }
-    return null;
-}
-
-interface FirstOfMultipleSelectorsQuery {
-    result: HTMLElement | null;
-    query_idx: Number;
-}
-
-async function wait_for_first_selector_that_exists(queries: string[]): Promise<FirstOfMultipleSelectorsQuery> {
-    let output: FirstOfMultipleSelectorsQuery = {
-        result: null,
-        query_idx: 0
-    };
-    while (output.result === null) {
-        for (let i = 0; i < queries.length; i++) {
-            const selector = document.querySelector(queries[i]);
-            if (selector) {
-                output.result = selector as HTMLElement | null;
-                output.query_idx = i;
-                return output;
-            }
-        }
-        await new Promise(r => setTimeout(r, 100));
-    }
-    return output;
-}
 
 const doAddSymbol = async (symbol: string) => {
     const open_symbold_list_button_el: HTMLElement | null = document.querySelector("[data-test-id='add-symbols-button']")
@@ -194,7 +152,7 @@ const doAddSymbol = async (symbol: string) => {
 
 }
 
-const doEditSymbol = async (data: SeekingAlphaPortfolio) => {
+const doEditSymbol = async (data: SharedPortfolio) => {
 
     const open_symbold_list_button_el: HTMLElement | null = document.querySelector("[data-test-id='edit-portfolio-button']") as HTMLElement | null;
 
@@ -218,22 +176,50 @@ const doEditSymbol = async (data: SeekingAlphaPortfolio) => {
     }
 }
 
-interface Window {
-    getSeekingAlphaPortfolio: () => Promise<SeekingAlphaPortfolio[]>;
-    getTickersAddUpdateRemove: (
-        etoro_portfolio: EtoroPortfolio[],
-        seeking_alpha_portfolio: SeekingAlphaPortfolio[],
-    ) => Promise<AddUpdateRemove>;
-    doAddSymbol: (symbol: string) => void;
-    doEditSymbol: (data: SeekingAlphaPortfolio) => void;
-    wait_for_selector_exists: (query: string) => Promise<HTMLElement | null>;
-    wait_for_first_selector_that_exists: (queries: string[]) => Promise<FirstOfMultipleSelectorsQuery>;
-}
-declare const window: Window;
+async function doAddAll() {
 
-window.getSeekingAlphaPortfolio = getSeekingAlphaPortfolio;
-window.getTickersAddUpdateRemove = getTickersAddUpdateRemove;
-window.doAddSymbol = doAddSymbol;
-window.doEditSymbol = doEditSymbol;
-window.wait_for_selector_exists = wait_for_selector_exists;
-window.wait_for_first_selector_that_exists = wait_for_first_selector_that_exists;
+}
+
+async function doEditAll() {
+
+}
+
+async function doRemoveAll() {
+
+}
+
+async function doAll() {
+
+}
+
+declare global {
+    interface Window {
+        doAll: () => void;
+        doAddAll: () => void;
+        doEditAll: () => void;
+        doRemoveAll: () => void;
+
+        /**Debug exports */
+        _getSeekingAlphaPortfolio: () => Promise<SharedPortfolio[]>;
+        _getTickersAddUpdateRemove: (
+            source_portfolio: SharedPortfolio[],
+            seeking_alpha_portfolio: SharedPortfolio[],
+        ) => Promise<AddUpdateRemove>;
+        _doAddSymbol: (symbol: string) => void;
+        _doEditSymbol: (data: SharedPortfolio) => void;
+    }
+}
+
+
+
+/**Debug exports */
+
+window._getSeekingAlphaPortfolio = getSeekingAlphaPortfolio;
+window._getTickersAddUpdateRemove = getTickersAddUpdateRemove;
+window._doAddSymbol = doAddSymbol;
+window._doEditSymbol = doEditSymbol;
+
+window.doAll = doAll;
+window.doAddAll = doAddAll;
+window.doEditAll = doEditAll;
+window.doRemoveAll = doRemoveAll;
