@@ -16,11 +16,7 @@
 You can edit the configuration files, such as `1_src/etoro_config.ts`.  
 This will require rebuilding the source afterwards.  
   
-## Rebuilding
-The rebuilding will require installing the project first.
-1. TS to js : `npm run build`. It uses `rollup` behind, as `tsc` would not resolve imports.
-2. Compress : `grunt`
-
-## Installing
-1. Install npm
-2. Run `npm install`
+## Rebuilding the code
+1. Install npm and run `npm install`
+2. TS to js : `npm run build`. It uses `rollup` behind, as `tsc` would not resolve imports.
+3. Compress : `grunt`
