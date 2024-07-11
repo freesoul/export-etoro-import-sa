@@ -1,5 +1,6 @@
 
 ## Exporting from Etoro
+1. Optionally configure discrepancies in symbols and conversion rates across platforms `1_src/etoro_config.ts`
 1. Copy the content of `3_minified/extoro_export.min.js`.
 2. Go to your etoro portfolio in your browser.
 3. Open the inspector (F12), go to the console, and paste the code.

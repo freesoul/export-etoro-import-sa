@@ -33,7 +33,9 @@
         return e.name = "SuppressedError", e.error = error, e.suppressed = suppressed, e;
     };
 
-    const IGNORE = ["NVTKL.L"];
+    // Symbols as in Etoro to ignore in the export
+    const ETORO_IGNORE = ["NVTKL.L"];
+    // Symbols mapping to transform from Etoro to SA
     const ETORO_TO_SA_MAPPING = {
         "BA.L": {
             sa_name: "BAESY",
@@ -60,6 +62,7 @@
             conversion_rate: 1,
         },
     };
+
     function mapEtoroToSASymbol(sa_symbol) {
         return ETORO_TO_SA_MAPPING[sa_symbol];
     }
@@ -96,7 +99,7 @@
                 }
                 let avg_open = parseFloat(avg_open_str);
                 let units = parseFloat(units_str);
-                if (IGNORE.includes(symbol)) {
+                if (ETORO_IGNORE.includes(symbol)) {
                     return;
                 }
                 const mapped = mapEtoroToSASymbol(symbol);
