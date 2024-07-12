@@ -10,7 +10,12 @@
 1. Go to your **holdings tab** of your Seeking Alpha concerned portfolio.
 2. Open the inspector (F12), go to the console, and paste the output of the exporting phase.
 3. Copy the content of `3_minified/seeking_alpha_import.min.js` and paste it in the console.
-4. Type in the console `doAll(exported_portfolio)`
+4. Type in the console `doAll(exported_portfolio)`, which will add, remove, and update the symbols accordingly.
+
+### Current limitations  
+- Limited to 1 lot per symbol.  
+- Only 'buy'
+- No date manipulation
 
 ## Configuration
 You can edit the configuration files, such as `1_src/etoro_config.ts`.  
